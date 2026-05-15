@@ -23,7 +23,6 @@ const int columnas = ANCHO_PANTALLA / tam_celda;
 
 const float GRAVEDAD = 12*tam_celda;
 bool debug_mode = false;
-bool musicote = false;
 bool victoria = false;
 int vic_cont = 0;
 int vic_frame = 0;
@@ -39,11 +38,8 @@ int main()
     srand((unsigned int) time(NULL));
 
     InitWindow(ANCHO_PANTALLA, ALTO_PANTALLA, "FiumEscape");
-    //ToggleBorderlessWindowed();
-    SetWindowState(FLAG_VSYNC_HINT);
-    ClearWindowState(FLAG_WINDOW_TOPMOST);
     HideCursor();
-    ToggleFullscreen();
+    // Se han quitado flags no soportados en DRM como ToggleFullscreen()
 
     SetTargetFPS(60);
     
@@ -57,7 +53,7 @@ int main()
     InitAudioDevice();
     Music musica = LoadMusicStream("Audio/SuperGrottoEscape.wav");
 
-    // Creaci�n del escenario
+    // Creacion del escenario
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int matriz_colision[columnas][filas] = {};
 
@@ -177,6 +173,8 @@ int main()
     
     float delta = 0;
 
+    PlayMusicStream(musica);
+
     // BUCLE PRINCIPAL
     while (!WindowShouldClose() and !fin)
     {
@@ -216,11 +214,6 @@ int main()
         // Camara
         ActualizarCamara(&camara, &jug);
 
-        // raton = GetScreenToWorld2D(GetMousePosition(), camara);
-        // raton_celda = { (int)raton.x / tam_celda , (int)raton.y / tam_celda };
-        // raton_celda.x = (int)Clamp((float)raton_celda.x, 0, columnas - 1);
-        // raton_celda.y = (int)Clamp((float)raton_celda.y, 0, filas - 1);
-
         selec_celda = jug.celda + selec_despl;
 
         if (IsKeyPressed(KEY_RIGHT))
@@ -237,25 +230,19 @@ int main()
             selec_despl.y += 1;
         }
 
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) and matriz_colision[selec_celda.x][selec_celda.y] == 0
+        if (IsKeyPressed(KEY_C) and matriz_colision[selec_celda.x][selec_celda.y] == 0
             and num_bloques > 0)
         {
             matriz_colision[selec_celda.x][selec_celda.y] = 3;
             num_bloques--;
         }
-        if (debug_mode and IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+        if (debug_mode and IsKeyPressed(KEY_R))
         {
             if(matriz_colision[selec_celda.x][selec_celda.y])
                 num_bloques++;;
             matriz_colision[selec_celda.x][selec_celda.y] = 0;
             
         }
-        
-        //if (debug_mode and IsKeyPressed(KEY_R))
-        //{
-        //    jug.cuerpo.x = raton.x;
-        //    jug.cuerpo.y = raton.y;
-        //}
 
         // Recursos
 
@@ -324,19 +311,7 @@ int main()
         }
 
         // Audio
-
-        if (!musicote) 
-        {
-            Recurso* r = &bloques[79];
-            if (r->consumido)
-            {
-                musicote = true;
-                PlayMusicStream(musica);
-            }
-        }
-        else
-            UpdateMusicStream(musica);
-
+        UpdateMusicStream(musica);
 
         // Dibujado
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -501,7 +476,7 @@ int main()
             }
         }
 
-        if (musicote and tutorial_cont < 200)
+        if (tutorial_cont < 200)
         {
             DrawRectangle(600, 50, 1200, 150, BLACK);
             DrawRectangleLinesEx({ 600, 50, 1200, 150 }, 4.0f, YELLOW);
