@@ -133,7 +133,7 @@ void Jugador::mov_ver(bool abajo, bool arriba, float delta)
 			vel.y = 12 * cuerpo.width;
 	}
 
-	if (IsKeyDown(KEY_SHIFT_ALT) and puede_saltar and !arriba)
+	if (IsKeyDown(KEY_LEFT_ALT) and puede_saltar and !arriba)
 	{
 		vel.y = -fuerza_salto;
 		puede_saltar = false;
