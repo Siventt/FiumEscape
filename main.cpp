@@ -178,7 +178,7 @@ int main()
     // BUCLE PRINCIPAL
     while (!WindowShouldClose() and !fin)
     {
-        if (IsKeyPressed(KEY_6) and IsKeyPressed(KEY_V))
+        if (IsKeyPressed(KEY_SIX) and IsKeyPressed(KEY_V))
             fin = true;
 
         // Control de la ventana
@@ -222,7 +222,7 @@ int main()
         if (IsKeyPressed(KEY_Z))
         {
             selec_despl.x += 1;
-        } else if (IsKeyPressed(KEY_SHIFT))
+        } else if (IsKeyPressed(KEY_LEFT_SHIFT))
         {
             selec_despl.x -= 1;
         } else if (IsKeyPressed(KEY_X))
