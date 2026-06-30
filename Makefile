@@ -8,3 +8,4 @@ all:
 
 clean:
 	rm -f $(EXEC_NAME)
+

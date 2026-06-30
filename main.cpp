@@ -178,6 +178,9 @@ int main()
     // BUCLE PRINCIPAL
     while (!WindowShouldClose() and !fin)
     {
+        if (IsKeyPressed(KEY_6) and IsKeyPressed(KEY_V))
+            fin = true;
+
         // Control de la ventana
         if (IsKeyPressed(KEY_F1))
             debug_mode = !debug_mode;
@@ -216,21 +219,21 @@ int main()
 
         selec_celda = jug.celda + selec_despl;
 
-        if (IsKeyPressed(KEY_RIGHT))
+        if (IsKeyPressed(KEY_Z))
         {
             selec_despl.x += 1;
-        } else if (IsKeyPressed(KEY_LEFT))
+        } else if (IsKeyPressed(KEY_SHIFT))
         {
             selec_despl.x -= 1;
-        } else if (IsKeyPressed(KEY_UP))
+        } else if (IsKeyPressed(KEY_X))
         {
             selec_despl.y -= 1;
-        } else if (IsKeyPressed(KEY_DOWN))
+        } else if (IsKeyPressed(KEY_SPACE))
         {
             selec_despl.y += 1;
         }
 
-        if (IsKeyPressed(KEY_C) and matriz_colision[selec_celda.x][selec_celda.y] == 0
+        if (IsKeyPressed(KEY_M) and matriz_colision[selec_celda.x][selec_celda.y] == 0
             and num_bloques > 0)
         {
             matriz_colision[selec_celda.x][selec_celda.y] = 3;
@@ -287,7 +290,7 @@ int main()
             else
                 bateria_indicador = WHITE;
         }
-        if (bateria > 0 and IsKeyPressed(KEY_F) and !victoria)
+        if (bateria > 0 and IsKeyPressed(KEY_C) and !victoria)
         {
             linterna = !linterna;
         }

@@ -97,9 +97,9 @@ void Jugador::act_anim()
 void Jugador::mov_hor(bool izq, bool der, float delta)
 {
 	dir.x = 0;
-	if (IsKeyDown(KEY_A))
+	if (IsKeyDown(KEY_LEFT))
 		dir.x = -1;
-	if (IsKeyDown(KEY_D))
+	if (IsKeyDown(KEY_RIGHT))
 		dir.x = 1;
 
 	if (der and dir.x >= 0 and (celda.x * cuerpo.width - cuerpo.x) <= 0)
@@ -133,7 +133,7 @@ void Jugador::mov_ver(bool abajo, bool arriba, float delta)
 			vel.y = 12 * cuerpo.width;
 	}
 
-	if (IsKeyDown(KEY_SPACE) and puede_saltar and !arriba)
+	if (IsKeyDown(KEY_ALT) and puede_saltar and !arriba)
 	{
 		vel.y = -fuerza_salto;
 		puede_saltar = false;
