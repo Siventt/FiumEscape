@@ -14,7 +14,7 @@ using namespace std;
 
 const Color AZUL_FONDO = { 21, 17, 35, 255 };
 
-const int U = 120;
+const int U = 60;
 const int ANCHO_PANTALLA = 16 * U;
 const int ALTO_PANTALLA = 9 * U;
 const int tam_celda = 32;
