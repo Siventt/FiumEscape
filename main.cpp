@@ -37,7 +37,7 @@ int main()
 {
     srand((unsigned int) time(NULL));
 
-    InitWindow(ANCHO_PANTALLA, ALTO_PANTALLA, "FiumEscape");
+    InitWindow(0, 0, "FiumEscape");
     HideCursor();
     // Se han quitado flags no soportados en DRM como ToggleFullscreen()
 
