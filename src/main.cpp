@@ -2,10 +2,11 @@
 #include <raymath.h>
 #include <stdio.h>
 #include <vector>
-#include "jugador.hpp"
 #include <time.h>
 #include <string>
+#include "jugador.hpp"
 #include "recursos.hpp"
+#include "input_actions.hpp"
 
 #define NUM_BATERIAS 20
 #define NUM_BLOQUES 80
@@ -14,14 +15,14 @@ using namespace std;
 
 const Color AZUL_FONDO = { 21, 17, 35, 255 };
 
-const int U = 60;
+const int U = 120;
 const int ANCHO_PANTALLA = 16 * U;
 const int ALTO_PANTALLA = 9 * U;
 const int tam_celda = 32;
 const int filas = 80;
 const int columnas = ANCHO_PANTALLA / tam_celda;
 
-const float GRAVEDAD = 12*tam_celda;
+const float GRAVEDAD = 12 * tam_celda;
 bool debug_mode = false;
 bool victoria = false;
 int vic_cont = 0;
@@ -37,23 +38,22 @@ int main()
 {
     srand((unsigned int) time(NULL));
 
-    InitWindow(0, 0, "FiumEscape");
+    InitWindow(ANCHO_PANTALLA, ALTO_PANTALLA, "FiumEscape");
+    InitAudioDevice();
+
     HideCursor();
     // Se han quitado flags no soportados en DRM como ToggleFullscreen()
-
-    SetTargetFPS(60);
     
-    Texture2D bloques_text = LoadTexture("Graficos/bloques.png");
-    Texture2D fondo_text = LoadTexture("Graficos/fondo.png");
-    Texture2D bloque_text = LoadTexture("Graficos/bloque.png");
-    Texture2D bateria_text = LoadTexture("Graficos/bateria.png");
-    Texture2D brillo_text = LoadTexture("Graficos/brillo.png");
-    Texture2D victoria_text = LoadTexture("Graficos/victoria.png");
+    Texture2D t_bloques  = LoadTexture(ASSETS_PATH"img/bloques.png");
+    Texture2D t_fondo    = LoadTexture(ASSETS_PATH"img/fondo.png");
+    Texture2D t_bloque   = LoadTexture(ASSETS_PATH"img/bloque.png");
+    Texture2D t_bateria  = LoadTexture(ASSETS_PATH"img/bateria.png");
+    Texture2D t_brillo   = LoadTexture(ASSETS_PATH"img/brillo.png");
+    Texture2D t_victoria = LoadTexture(ASSETS_PATH"img/victoria.png");
 
-    InitAudioDevice();
-    Music musica = LoadMusicStream("Audio/SuperGrottoEscape.wav");
+    Music musica = LoadMusicStream(ASSETS_PATH"sounds/SuperGrottoEscape.wav");
 
-    // Creacion del escenario
+    #pragma region Creacion_Escenario
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int matriz_colision[columnas][filas] = {};
 
@@ -116,9 +116,9 @@ int main()
     {
         matriz_colision[x][filas - 5] = 3;
     }
+    #pragma endregion
 
     // Generar baterías y bloques rand
-    
     Recurso baterias[NUM_BATERIAS] = {};
     baterias[0] = { {49, 4}, false };
     for (int i = 1; i < NUM_BATERIAS; i++)
@@ -173,16 +173,18 @@ int main()
     
     float delta = 0;
 
+    SetTargetFPS(60);
+
     PlayMusicStream(musica);
 
     // BUCLE PRINCIPAL
     while (!WindowShouldClose() and !fin)
     {
-        if (IsKeyPressed(KEY_SIX) and IsKeyPressed(KEY_V))
+        if (IsKeyPressed(SALIR_1) and IsKeyPressed(SALIR_2))
             fin = true;
 
         // Control de la ventana
-        if (IsKeyPressed(KEY_F1))
+        if (IsKeyPressed(DEBUG))
             debug_mode = !debug_mode;
 
         // Actualizado
@@ -219,36 +221,23 @@ int main()
 
         selec_celda = jug.celda + selec_despl;
 
-        if (IsKeyPressed(KEY_Z))
-        {
+        if (IsKeyPressed(CURSOR_DER))
             selec_despl.x += 1;
-        } else if (IsKeyPressed(KEY_LEFT_SHIFT))
-        {
+        else if (IsKeyPressed(CURSOR_IZQ))
             selec_despl.x -= 1;
-        } else if (IsKeyPressed(KEY_X))
-        {
+        else if (IsKeyPressed(CURSOR_ARR))
             selec_despl.y -= 1;
-        } else if (IsKeyPressed(KEY_SPACE))
-        {
+        else if (IsKeyPressed(CURSOR_ABJ))
             selec_despl.y += 1;
-        }
 
-        if (IsKeyPressed(KEY_M) and matriz_colision[selec_celda.x][selec_celda.y] == 0
+        if (IsKeyPressed(COLOCAR_BLOQUE) and matriz_colision[selec_celda.x][selec_celda.y] == 0
             and num_bloques > 0)
         {
             matriz_colision[selec_celda.x][selec_celda.y] = 3;
             num_bloques--;
         }
-        if (debug_mode and IsKeyPressed(KEY_R))
-        {
-            if(matriz_colision[selec_celda.x][selec_celda.y])
-                num_bloques++;;
-            matriz_colision[selec_celda.x][selec_celda.y] = 0;
-            
-        }
 
         // Recursos
-
         for (int i = 0; i < NUM_BATERIAS; i++)
         {
             Recurso* b = &baterias[i];
@@ -284,13 +273,12 @@ int main()
                 bateria_cont = 0;
             }
 
-
             if (bateria > 300)
                 bateria_indicador = YELLOW;
             else
                 bateria_indicador = WHITE;
         }
-        if (bateria > 0 and IsKeyPressed(KEY_C) and !victoria)
+        if (bateria > 0 and IsKeyPressed(LINTERNA) and !victoria)
         {
             linterna = !linterna;
         }
@@ -342,7 +330,7 @@ int main()
             {
                 Recurso* b = &baterias[i];
                 if (!b->consumido)
-                    DrawTextureRec(brillo_text, {frame_brillo * 16.0f, 0, 16, 16}, { (float) b->pos.x * tam_celda + 8, (float) b->pos.y * tam_celda + 8 }, WHITE);
+                    DrawTextureRec(t_brillo, {frame_brillo * 16.0f, 0, 16, 16}, { (float) b->pos.x * tam_celda + 8, (float) b->pos.y * tam_celda + 8 }, WHITE);
             }
         }
 
@@ -351,10 +339,10 @@ int main()
 
         // Fondo 
         DrawRectangle(-1920, -1080, GetScreenWidth()*tam_celda, GetScreenHeight()*tam_celda, AZUL_FONDO);
-        DrawTextureRec(fondo_text, { 64, 0, 32, 64 }, { (float)50 * tam_celda, (float)3 * tam_celda }, WHITE);
-        DrawTextureRec(fondo_text, { 32, 0, 32, 32 }, { (float)49 * tam_celda, (float)3 * tam_celda }, WHITE);
-        DrawTextureRec(fondo_text, { 32, 0, 32, 32 }, { (float)51 * tam_celda, (float)3 * tam_celda }, WHITE);
-        DrawTextureRec(fondo_text, { 32, 0, 32, 32 }, { (float)50 * tam_celda, (float)(filas - 6) * tam_celda }, WHITE);
+        DrawTextureRec(t_fondo, { 64, 0, 32, 64 }, { (float)50 * tam_celda, (float)3 * tam_celda }, WHITE);
+        DrawTextureRec(t_fondo, { 32, 0, 32, 32 }, { (float)49 * tam_celda, (float)3 * tam_celda }, WHITE);
+        DrawTextureRec(t_fondo, { 32, 0, 32, 32 }, { (float)51 * tam_celda, (float)3 * tam_celda }, WHITE);
+        DrawTextureRec(t_fondo, { 32, 0, 32, 32 }, { (float)50 * tam_celda, (float)(filas - 6) * tam_celda }, WHITE);
 
         // Pasada para los recursos
 
@@ -362,14 +350,14 @@ int main()
         {
             Recurso* b = &baterias[i];
             if(!b->consumido)
-                DrawTexture(bateria_text, b->pos.x * tam_celda + 8, b->pos.y * tam_celda + 8, WHITE);
+                DrawTexture(t_bateria, b->pos.x * tam_celda + 8, b->pos.y * tam_celda + 8, WHITE);
         }
 
         for (int i = 0; i < NUM_BLOQUES; i++)
         {
             Recurso* b = &bloques[i];
             if (!b->consumido)
-                DrawTexture(bloque_text, b->pos.x * tam_celda + 8, b->pos.y * tam_celda + 8, WHITE);
+                DrawTexture(t_bloque, b->pos.x * tam_celda + 8, b->pos.y * tam_celda + 8, WHITE);
         }
         
         // Bloques
@@ -380,19 +368,19 @@ int main()
                 switch (matriz_colision[x][y])
                 {
                 case 1: // bloque 1
-                    DrawTextureRec(bloques_text, { 0, 0, 32, 32 }, {(float)x*tam_celda, (float)y * tam_celda}, WHITE);
+                    DrawTextureRec(t_bloques, { 0, 0, 32, 32 }, {(float)x*tam_celda, (float)y * tam_celda}, WHITE);
                     break;
                 case 2: // bloque 2
-                    DrawTextureRec(bloques_text, { 32, 0, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
+                    DrawTextureRec(t_bloques, { 32, 0, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
                     break;
                 case 3: // bloque 3
-                    DrawTextureRec(bloques_text, { 32, 32, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
+                    DrawTextureRec(t_bloques, { 32, 32, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
                     break;
                 case 4: // pared izq
-                    DrawTextureRec(bloques_text, { 0, 32, -32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
+                    DrawTextureRec(t_bloques, { 0, 32, -32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
                     break;
                 case 5: // pared der
-                    DrawTextureRec(bloques_text, { 0, 32, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
+                    DrawTextureRec(t_bloques, { 0, 32, 32, 32 }, { (float)x * tam_celda, (float)y * tam_celda }, WHITE);
                     break;
                 default:
                     break;
@@ -410,7 +398,7 @@ int main()
         {
             if (fin_cont < 150)
             {
-                DrawTextureRec(victoria_text, {(float)vic_frame*tam_celda,0,32,32 }, { 50 * tam_celda, 4 * tam_celda }, WHITE);
+                DrawTextureRec(t_victoria, {(float)vic_frame*tam_celda,0,32,32 }, { 50 * tam_celda, 4 * tam_celda }, WHITE);
                 if (vic_cont++ == 10)
                 {
                     vic_frame = (vic_frame + 1) % 8;
@@ -435,11 +423,11 @@ int main()
         EndMode2D();
 
         // Interfaz
-        DrawTextureEx(bloque_text, { 20, 50 }, 0.0f, 2.0f, WHITE);
+        DrawTextureEx(t_bloque, { 20, 50 }, 0.0f, 2.0f, WHITE);
 
         DrawText(TextFormat("Bloques %d", num_bloques), 60, 50, 32, bloques_color);
 
-        DrawTextureEx(bateria_text, { 20, 100 }, 0.0f, 2.0f, WHITE);
+        DrawTextureEx(t_bateria, { 20, 100 }, 0.0f, 2.0f, WHITE);
         DrawText("Batería", 60, 100, 32, bateria_color);
         DrawRectangleGradientH(20, 140, min(bateria, 300), 32, bateria_indicador, YELLOW);
 
@@ -511,6 +499,14 @@ int main()
         EndDrawing();
         //~~
     }
+
+    UnloadTexture(t_bloques);
+    UnloadTexture(t_bloque);
+    UnloadTexture(t_fondo);
+    UnloadTexture(t_bateria);
+    UnloadTexture(t_brillo);
+    UnloadTexture(t_victoria);
+
     UnloadMusicStream(musica);
 
     CloseAudioDevice();

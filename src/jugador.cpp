@@ -1,5 +1,5 @@
 #include "jugador.hpp"
-//#include <stdio.h>
+#include "input_actions.hpp"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ Jugador::Jugador(Vector2 pos, int tam_celda)
 	fuerza_salto = tam_celda * 7.0f;
 	puede_saltar = false;
 
-	sprite = LoadTexture("Graficos/jugador.png");
+	sprite = LoadTexture(ASSETS_PATH"img/jugador.png");
 	frame = { 0, 0, 32, 32 };
 	frame_actual = 0;
 	frame_cont = 0;
@@ -97,9 +97,9 @@ void Jugador::act_anim()
 void Jugador::mov_hor(bool izq, bool der, float delta)
 {
 	dir.x = 0;
-	if (IsKeyDown(KEY_LEFT))
+	if (IsKeyDown(MOVER_IZQ))
 		dir.x = -1;
-	if (IsKeyDown(KEY_RIGHT))
+	if (IsKeyDown(MOVER_DER))
 		dir.x = 1;
 
 	if (der and dir.x >= 0 and (celda.x * cuerpo.width - cuerpo.x) <= 0)
@@ -133,7 +133,7 @@ void Jugador::mov_ver(bool abajo, bool arriba, float delta)
 			vel.y = 12 * cuerpo.width;
 	}
 
-	if (IsKeyDown(KEY_LEFT_ALT) and puede_saltar and !arriba)
+	if (IsKeyDown(SALTAR) and puede_saltar and !arriba)
 	{
 		vel.y = -fuerza_salto;
 		puede_saltar = false;
@@ -188,7 +188,7 @@ void Jugador::dibujar_estado()
 	switch (estado)
 	{
 	case IDLE:
-		DrawText("IDLE", 1600, 1000, 32, YELLOW);
+		DrawText("OCIOSO", 1600, 1000, 32, YELLOW);
 		break;
 	case CORRIENDO:
 		DrawText("CORRIENDO", 1600, 1000, 32, YELLOW);

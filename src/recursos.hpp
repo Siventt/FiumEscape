@@ -1,5 +1,7 @@
 #pragma once
 
+#define ASSETS_PATH "./assets/"
+
 struct Vector2i
 {
 	int x;
