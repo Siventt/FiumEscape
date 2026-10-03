@@ -15,12 +15,11 @@ using namespace std;
 
 const Color AZUL_FONDO = { 21, 17, 35, 255 };
 
-const int U = 120;
-const int ANCHO_PANTALLA = 16 * U;
-const int ALTO_PANTALLA = 9 * U;
+const int ANCHO_PANTALLA = 1280;
+const int ALTO_PANTALLA = 720;
 const int tam_celda = 32;
 const int filas = 80;
-const int columnas = ANCHO_PANTALLA / tam_celda;
+const int columnas = 60;
 
 const float GRAVEDAD = 12 * tam_celda;
 bool debug_mode = false;
@@ -30,6 +29,9 @@ int vic_frame = 0;
 bool fin = false;
 int fin_cont = 0;
 
+void CrearEscenario();
+
+void DibujarDebug(int tam_celda);
 static void ActualizarCamara(Camera2D* camera, Jugador* jug);
 
 // Punto de entrada del programa
@@ -44,6 +46,8 @@ int main()
     HideCursor();
     // Se han quitado flags no soportados en DRM como ToggleFullscreen()
     
+    Texture2D t_jugador = LoadTexture(ASSETS_PATH"img/jugador.png");
+
     Texture2D t_bloques  = LoadTexture(ASSETS_PATH"img/bloques.png");
     Texture2D t_fondo    = LoadTexture(ASSETS_PATH"img/fondo.png");
     Texture2D t_bloque   = LoadTexture(ASSETS_PATH"img/bloque.png");
@@ -53,9 +57,10 @@ int main()
 
     Music musica = LoadMusicStream(ASSETS_PATH"sounds/SuperGrottoEscape.wav");
 
-    #pragma region Creacion_Escenario
+    #pragma region Creacion_Escenario_Recursos
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     int matriz_colision[columnas][filas] = {};
+
 
     for (int i = 0; i < filas; i++)
     {
@@ -116,7 +121,6 @@ int main()
     {
         matriz_colision[x][filas - 5] = 3;
     }
-    #pragma endregion
 
     // Generar baterías y bloques rand
     Recurso baterias[NUM_BATERIAS] = {};
@@ -142,9 +146,9 @@ int main()
     bloques[78] = { { 27, filas - 3 }, false };
     bloques[79] = { { 50, filas - 3 }, false };
     
-    //~~
+    #pragma endregion
 
-    Jugador jug = { {6*tam_celda, 6*tam_celda} , tam_celda};
+    Jugador jug = { {6*tam_celda, 6*tam_celda} , tam_celda, t_jugador};
     int num_bloques = 0;
     Color bloques_color = YELLOW;
 
@@ -166,7 +170,7 @@ int main()
     camara.target = { jug.cuerpo.x, jug.cuerpo.y };
     camara.offset = { ANCHO_PANTALLA / 2.0f, ALTO_PANTALLA / 2.0f };
     camara.rotation = 0;
-    camara.zoom = 2.5f;
+    camara.zoom = 2.0f;
 
     bool tutorial = true;
     int tutorial_cont = -1000;
@@ -180,7 +184,9 @@ int main()
     // BUCLE PRINCIPAL
     while (!WindowShouldClose() and !fin)
     {
-        if (IsKeyPressed(SALIR_1) and IsKeyPressed(SALIR_2))
+        delta = GetFrameTime();
+
+        if (IsKeyPressed(SALIR))
             fin = true;
 
         // Control de la ventana
@@ -213,7 +219,7 @@ int main()
             }
         }
 
-        delta = GetFrameTime();
+        
 
 
         // Camara
@@ -304,7 +310,7 @@ int main()
         // Audio
         UpdateMusicStream(musica);
 
-        // Dibujado
+        #pragma region Dibujado
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         BeginDrawing();
 
@@ -314,15 +320,12 @@ int main()
 
         // Fondo
         // Rejilla / Cuadricula
-        for (int i = 0; i <= filas; i++)
-        {
-            // lineas horizontales
-            DrawLine(0, i*tam_celda, ANCHO_PANTALLA, i*tam_celda, DARKGRAY);
+        for (int i = 0; i <= filas; i++) // lineas horizontales
+            DrawLine(0, i*tam_celda, columnas*tam_celda, i*tam_celda, DARKGRAY);
+        
+        for (int j = 0; j <= columnas; j++) // lineas verticales
+            DrawLine(j*tam_celda, 0, j * tam_celda, filas*tam_celda, DARKGRAY);
 
-            // lineas verticales
-            if (i <= columnas)
-                DrawLine(i * tam_celda, 0, i * tam_celda, filas*tam_celda, DARKGRAY);
-        }
 
         if (!linterna)
         {
@@ -423,17 +426,17 @@ int main()
         EndMode2D();
 
         // Interfaz
-        DrawTextureEx(t_bloque, { 20, 50 }, 0.0f, 2.0f, WHITE);
+        DrawTextureEx(t_bloque, { 20, 20 }, 0.0f, 2.0f, WHITE);
+        DrawText(TextFormat("Bloques %d", num_bloques), 60, 20, 32, bloques_color);
 
-        DrawText(TextFormat("Bloques %d", num_bloques), 60, 50, 32, bloques_color);
-
-        DrawTextureEx(t_bateria, { 20, 100 }, 0.0f, 2.0f, WHITE);
-        DrawText("Batería", 60, 100, 32, bateria_color);
-        DrawRectangleGradientH(20, 140, min(bateria, 300), 32, bateria_indicador, YELLOW);
+        DrawTextureEx(t_bateria, { 20, 60 }, 0.0f, 2.0f, WHITE);
+        DrawText("Batería", 60, 60, 32, bateria_color);
+        DrawRectangleGradientH(20, 100, min(bateria, 300), 32, bateria_indicador, YELLOW);
 
         if(!linterna)
             DrawRectangleLinesEx(areaVision, 1, WHITE);
 
+        /*
         if (tutorial)
         {
             if (tutorial_cont > -900)
@@ -475,6 +478,7 @@ int main()
             DrawText("Cuidado, son limitados y no se quitan.", 620, 110, 32, YELLOW);
             tutorial_cont++;
         }
+        */
 
         if (victoria)
         {
@@ -488,18 +492,14 @@ int main()
 
         if (debug_mode)
         {
-            DrawText(TextFormat("Filas: %d Columnas: %d", filas, columnas), 1600, 20, 26, WHITE);
-            // DrawText(TextFormat("Raton (%d, %d)", (int)raton.x, (int)raton.y), 1600, 75, 26, WHITE);
-            DrawText(TextFormat("Celda (%d, %d)", selec_celda.x, selec_celda.y), 1600, 100, 26, RED);
-            DrawText(TextFormat("Jugador (%d,%d)", (int)jug.cuerpo.x, (int)jug.cuerpo.y), 1600, 150, 26, WHITE);
-            DrawText(TextFormat("Celda (%d,%d)", jug.celda.x, jug.celda.y), 1600, 175, 26, RED);
-            jug.dibujar_estado();
+            DibujarDebug(tam_celda);
         }
 
         EndDrawing();
-        //~~
+        #pragma endregion
     }
 
+    UnloadTexture(t_jugador);
     UnloadTexture(t_bloques);
     UnloadTexture(t_bloque);
     UnloadTexture(t_fondo);
@@ -512,6 +512,15 @@ int main()
     CloseAudioDevice();
     CloseWindow();
     return 0;
+}
+
+void DibujarDebug(int tam_celda)
+{
+    // Dibuja informacion tecnica
+    DrawRectangle(5, 5, GetScreenWidth()/4, GetScreenHeight()/2, BLACK);
+    int linea = 0;
+    DrawText("Información Técnica", 10, (linea++) * 30 + 10, 30, WHITE);
+    DrawText(TextFormat("Resolución: %dx%d", GetScreenWidth(), GetScreenHeight()), 10, (linea++) * 30 + 10, 20, WHITE);
 }
 
 static void ActualizarCamara(Camera2D* camera, Jugador* jug)

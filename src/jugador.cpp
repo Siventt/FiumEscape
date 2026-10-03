@@ -6,7 +6,7 @@ using namespace std;
 enum Estados{IDLE, CORRIENDO, SUBIENDO, CAYENDO};
 Estados estado;
 
-Jugador::Jugador(Vector2 pos, int tam_celda)
+Jugador::Jugador(Vector2 pos, int tam_celda, Texture2D textura)
 {
 	cuerpo.x = pos.x;
 	cuerpo.y = pos.y;
@@ -19,16 +19,11 @@ Jugador::Jugador(Vector2 pos, int tam_celda)
 	fuerza_salto = tam_celda * 7.0f;
 	puede_saltar = false;
 
-	sprite = LoadTexture(ASSETS_PATH"img/jugador.png");
+	sprite = textura;
 	frame = { 0, 0, 32, 32 };
 	frame_actual = 0;
 	frame_cont = 0;
 	estado = IDLE;
-}
-
-Jugador::~Jugador()
-{
-	UnloadTexture(sprite);
 }
 
 void Jugador::act_celda()
@@ -181,25 +176,4 @@ void Jugador::dibujar_colision()
 	//DrawRectangleRec(cuerpo, BLUE);
 	DrawRectangleLines(celda.x * (int)cuerpo.width, celda.y * (int)cuerpo.width,
 		(int) cuerpo.width, (int) cuerpo.width, RED);
-}
-
-void Jugador::dibujar_estado()
-{
-	switch (estado)
-	{
-	case IDLE:
-		DrawText("OCIOSO", 1600, 1000, 32, YELLOW);
-		break;
-	case CORRIENDO:
-		DrawText("CORRIENDO", 1600, 1000, 32, YELLOW);
-		break;
-	case SUBIENDO:
-		DrawText("SUBIENDO", 1600, 1000, 32, YELLOW);
-		break;
-	case CAYENDO:
-		DrawText("CAYENDO", 1600, 1000, 32, YELLOW);
-		break;
-	default:
-		break;
-	}
 }

@@ -7,8 +7,7 @@ extern const float GRAVEDAD;
 
 struct Jugador
 {
-	Jugador(Vector2 pos, int tam_celda);
-	~Jugador();
+	Jugador(Vector2 pos, int tam_celda, Texture2D textura);
 
 	void act_celda();
 	void act_anim();
@@ -17,7 +16,6 @@ struct Jugador
 	void revisar_pos(bool casilla);
 	void dibujar();
 	void dibujar_colision();
-	void dibujar_estado();
 
 	Rectangle cuerpo;
 	Vector2i celda;
