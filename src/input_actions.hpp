@@ -18,18 +18,18 @@
 #define MOVER_DER       KEY_RIGHT // 263
 #define MOVER_IZQ       KEY_LEFT  // 262
 
-#define SALTAR          KEY_LEFT_ALT // 342
+#define SALTAR          265
 
-#define CURSOR_ARR      KEY_Z // 32
-#define CURSOR_DER      KEY_X // 88
-#define CURSOR_ABJ      KEY_SPACE
-#define CURSOR_IZQ      KEY_LEFT_SHIFT
+#define CURSOR_ARR      32
+#define CURSOR_DER      90
+#define CURSOR_ABJ      88
+#define CURSOR_IZQ      340
 
 #define COLOCAR_BLOQUE  77
-#define LINTERNA        264
+#define LINTERNA        342
 
 // DEBUG
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define DEBUG           KEY_UP
+#define DEBUG           KEY_DOWN // 264
 
 #define SALIR         KEY_SIX
