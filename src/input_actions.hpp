@@ -15,18 +15,18 @@
 
 // ARCADE
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#define MOVER_DER       KEY_RIGHT
-#define MOVER_IZQ       KEY_LEFT
+#define MOVER_DER       KEY_RIGHT // 263
+#define MOVER_IZQ       KEY_LEFT  // 262
 
-#define SALTAR          KEY_LEFT_ALT
+#define SALTAR          KEY_LEFT_ALT // 342
 
-#define CURSOR_ARR      KEY_X
-#define CURSOR_DER      KEY_Z
+#define CURSOR_ARR      KEY_Z // 32
+#define CURSOR_DER      KEY_X // 88
 #define CURSOR_ABJ      KEY_SPACE
 #define CURSOR_IZQ      KEY_LEFT_SHIFT
 
-#define COLOCAR_BLOQUE  KEY_M
-#define LINTERNA        KEY_C
+#define COLOCAR_BLOQUE  77
+#define LINTERNA        264
 
 // DEBUG
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
