@@ -29,6 +29,9 @@ int vic_frame = 0;
 bool fin = false;
 int fin_cont = 0;
 
+int ult_tecla = 0;
+int tecla;
+
 void CrearEscenario();
 
 void DibujarDebug(int tam_celda);
@@ -520,8 +523,11 @@ void DibujarDebug(int tam_celda)
     DrawRectangle(5, 5, GetScreenWidth()/4, GetScreenHeight()/2, BLACK);
     int linea = 0;
     DrawText("Información Técnica", 10, (linea++) * 30 + 10, 30, WHITE);
-    DrawText(TextFormat("Resolución: %dx%d", GetScreenWidth(), GetScreenHeight()), 10, (linea++) * 30 + 10, 20, WHITE);
-    DrawText(TextFormat("Tecla: %d", GetKeyPressed()), 10, (linea++) * 30 + 10, 20, WHITE);
+    DrawText(TextFormat("Resolución: %dx%d", GetScreenWidth(), GetScreenHeight()), 10, (linea++) * 30 + 10, 20, WHITE);    
+    tecla = GetKeyPressed();
+    if (tecla != 0) 
+        ult_tecla = tecla;
+    DrawText(TextFormat("Tecla Pulsada: %d", ult_tecla), 10, (linea++) * 30 + 10, 20, WHITE);
 }
 
 static void ActualizarCamara(Camera2D* camera, Jugador* jug)
