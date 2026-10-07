@@ -164,7 +164,7 @@ int main()
     Vector2i selec_celda = {0,0};
     Vector2i selec_despl = {0,0};
 
-    char str_buffer[100];
+    // char str_buffer[100];
 
     Camera2D camara = {0};
     camara.target = { jug.cuerpo.x, jug.cuerpo.y };
@@ -172,8 +172,8 @@ int main()
     camara.rotation = 0;
     camara.zoom = 2.0f;
 
-    bool tutorial = true;
-    int tutorial_cont = -1000;
+    // bool tutorial = true;
+    // int tutorial_cont = -1000;
     
     float delta = 0;
 
@@ -521,6 +521,7 @@ void DibujarDebug(int tam_celda)
     int linea = 0;
     DrawText("Información Técnica", 10, (linea++) * 30 + 10, 30, WHITE);
     DrawText(TextFormat("Resolución: %dx%d", GetScreenWidth(), GetScreenHeight()), 10, (linea++) * 30 + 10, 20, WHITE);
+    DrawText(TextFormat("Tecla: %d", GetKeyPressed()), 10, (linea++) * 30 + 10, 20, WHITE);
 }
 
 static void ActualizarCamara(Camera2D* camera, Jugador* jug)
